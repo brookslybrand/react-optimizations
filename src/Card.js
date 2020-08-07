@@ -12,7 +12,7 @@ import Checklist from './Checklist'
 
 import CustomProfiler from './CustomProfiler'
 
-export default React.memo(({ id, title, body, options }) => (
+export default ({ id, title, body, options }) => (
   <CustomProfiler id={title}>
     <Card style={styles.card}>
       <CardContent style={styles.cardContent}>
@@ -42,7 +42,7 @@ export default React.memo(({ id, title, body, options }) => (
       </CardActions>
     </Card>
   </CustomProfiler>
-))
+)
 
 const styles = {
   card: {

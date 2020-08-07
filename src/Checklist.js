@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 import {
   FormLabel,
@@ -6,13 +6,9 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
-} from '@material-ui/core';
-
-import { useAppDispatch, setOption } from './app-context';
+} from '@material-ui/core'
 
 export default ({ id, options }) => {
-  const dispatch = useAppDispatch();
-
   return (
     <div style={{ display: 'flex' }}>
       <FormControl component="fieldset" style={{ margin: '3rem' }}>
@@ -23,11 +19,13 @@ export default ({ id, options }) => {
               key={key}
               control={
                 <Checkbox
-                  disableRipple
                   disableFocusRipple
+                  disableRipple
                   disableTouchRipple
                   checked={value}
-                  onChange={e => dispatch(setOption(id)(e.target.value))}
+                  onChange={e => {
+                    /* todo: add state logic */
+                  }}
                   value={key}
                 />
               }
@@ -37,5 +35,5 @@ export default ({ id, options }) => {
         </FormGroup>
       </FormControl>
     </div>
-  );
-};
+  )
+}

@@ -4,36 +4,28 @@ import { FormControlLabel, Switch, Button } from '@material-ui/core'
 import Card from './Card'
 import CustomProfiler from './CustomProfiler'
 
-import {
-  AppContextProvider,
-  useAppContext,
-  useAppDispatch,
-  reverse,
-  resetOptions,
-} from './app-context'
+import data from './fake-data'
 
 const App = () => {
   return (
     <CustomProfiler id="main" showBaseDuration>
-      <AppContextProvider>
-        <div style={styles.container}>
-          <Controls />
-          <Cards />
-        </div>
-      </AppContextProvider>
+      <div style={styles.container}>
+        <Controls />
+        <Cards />
+      </div>
     </CustomProfiler>
   )
 }
 
 const Controls = () => {
-  const dispatch = useAppDispatch()
-
   return (
     <div style={styles.controlsContainer}>
       <FormControlLabel
         control={
           <Switch
-            onChange={() => dispatch(reverse())}
+            onChange={() => {
+              /* Todo: add reversing logic */
+            }}
             value="reverse"
             color="primary"
             inputProps={{ 'aria-label': 'reverse switch' }}
@@ -45,7 +37,9 @@ const Controls = () => {
       <Button
         variant="contained"
         color="primary"
-        onClick={() => dispatch(resetOptions())}
+        onClick={() => {
+          /* Todo: add reset state logic */
+        }}
       >
         Reset Preferences
       </Button>
@@ -54,8 +48,6 @@ const Controls = () => {
 }
 
 const Cards = () => {
-  const data = useAppContext()
-
   return (
     <div style={styles.cardContainer}>
       {data.map(d => (
