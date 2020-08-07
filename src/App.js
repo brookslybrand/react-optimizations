@@ -1,10 +1,13 @@
-import React, { useReducer } from 'react'
+import React, { useReducer, useCallback } from 'react'
+import rfdc from 'rfdc'
 
 import { FormControlLabel, Switch, Button } from '@material-ui/core'
 import Card from './Card'
 import CustomProfiler from './CustomProfiler'
 
 import fakeData from './fake-data'
+
+const clone = rfdc()
 
 const TOGGLE_CHOICE = 'TOGGLE_CHOICE'
 const REVERSE_LIST = 'REVERSE_LIST'
@@ -34,7 +37,7 @@ const reducer = (state, action) => {
       return { ...state, isReversed: !state.isReversed, items: itemsCopy }
     }
     case RESET_DATA: {
-      return init(fakeData)
+      return init(clone(fakeData))
     }
     default: {
       return state
@@ -52,10 +55,12 @@ const init = initialItems => {
 const App = () => {
   const [state, dispatch] = useReducer(reducer, fakeData, init)
 
-  const toggleChoice = (itemId, optionKey) =>
-    dispatch({ type: TOGGLE_CHOICE, itemId, optionKey })
-  const reverseList = () => dispatch({ type: REVERSE_LIST })
-  const resetData = () => dispatch({ type: RESET_DATA })
+  const toggleChoice = useCallback(
+    (itemId, optionKey) => dispatch({ type: TOGGLE_CHOICE, itemId, optionKey }),
+    []
+  )
+  const reverseList = useCallback(() => dispatch({ type: REVERSE_LIST }), [])
+  const resetData = useCallback(() => dispatch({ type: RESET_DATA }), [])
 
   return (
     <CustomProfiler id="main" showBaseDuration>
@@ -71,7 +76,7 @@ const App = () => {
   )
 }
 
-const Controls = ({ isReversed, reverseList, resetData }) => {
+const Controls = React.memo(({ isReversed, reverseList, resetData }) => {
   return (
     <div style={styles.controlsContainer}>
       <FormControlLabel
@@ -92,7 +97,7 @@ const Controls = ({ isReversed, reverseList, resetData }) => {
       </Button>
     </div>
   )
-}
+})
 
 const Cards = ({ items, toggleChoice }) => {
   return (

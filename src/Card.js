@@ -12,7 +12,7 @@ import Checklist from './Checklist'
 
 import CustomProfiler from './CustomProfiler'
 
-export default ({ id, title, body, options, toggleChoice }) => (
+const CustomCard = React.memo(({ id, title, body, options, toggleChoice }) => (
   <CustomProfiler id={title}>
     <Card style={styles.card}>
       <CardContent style={styles.cardContent}>
@@ -22,13 +22,7 @@ export default ({ id, title, body, options, toggleChoice }) => (
           {body}
         </Typography>
 
-        <QRCode
-          bgColor="#FFFFFF"
-          fgColor="#000000"
-          level="Q"
-          style={{ ...styles.cardElement, ...styles.qrCode }}
-          value={id}
-        />
+        <MemoizedQRCode value={id} />
 
         <Checklist id={id} options={options} toggleChoice={toggleChoice} />
       </CardContent>
@@ -42,7 +36,21 @@ export default ({ id, title, body, options, toggleChoice }) => (
       </CardActions>
     </Card>
   </CustomProfiler>
-)
+))
+
+export default CustomCard
+
+const MemoizedQRCode = React.memo(({ value }) => {
+  return (
+    <QRCode
+      bgColor="#FFFFFF"
+      fgColor="#000000"
+      level="Q"
+      style={{ ...styles.cardElement, ...styles.qrCode }}
+      value={value}
+    />
+  )
+})
 
 const styles = {
   card: {
