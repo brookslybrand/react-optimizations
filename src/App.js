@@ -13,7 +13,20 @@ const RESET_DATA = 'RESET_DATA'
 const reducer = (state, action) => {
   switch (action.type) {
     case TOGGLE_CHOICE: {
-      return state
+      const { items } = state
+      const { itemId, optionKey } = action
+      const itemIndex = items.findIndex(({ id }) => id === itemId)
+      if (itemIndex === -1) return state
+      const item = items[itemIndex]
+      const option = item.options[optionKey]
+      const optionsCopy = {
+        ...item.options,
+        [optionKey]: { ...option, value: !option.value },
+      }
+      const itemCopy = { ...item, options: optionsCopy }
+      const itemsCopy = [...items]
+      itemsCopy.splice(itemIndex, 1, itemCopy)
+      return { ...state, items: itemsCopy }
     }
     case REVERSE_LIST: {
       const itemsCopy = [...state.items]
@@ -39,7 +52,8 @@ const init = initialItems => {
 const App = () => {
   const [state, dispatch] = useReducer(reducer, fakeData, init)
 
-  const toggleChoice = () => dispatch({ type: TOGGLE_CHOICE })
+  const toggleChoice = (itemId, optionKey) =>
+    dispatch({ type: TOGGLE_CHOICE, itemId, optionKey })
   const reverseList = () => dispatch({ type: REVERSE_LIST })
   const resetData = () => dispatch({ type: RESET_DATA })
 
@@ -51,7 +65,7 @@ const App = () => {
           reverseList={reverseList}
           resetData={resetData}
         />
-        <Cards items={state.items} />
+        <Cards items={state.items} toggleChoice={toggleChoice} />
       </div>
     </CustomProfiler>
   )
@@ -80,11 +94,11 @@ const Controls = ({ isReversed, reverseList, resetData }) => {
   )
 }
 
-const Cards = ({ items }) => {
+const Cards = ({ items, toggleChoice }) => {
   return (
     <div style={styles.cardContainer}>
       {items.map(d => (
-        <Card key={d.id} {...d} />
+        <Card key={d.id} {...d} toggleChoice={toggleChoice} />
       ))}
     </div>
   )

@@ -8,7 +8,7 @@ import {
   Checkbox,
 } from '@material-ui/core'
 
-export default ({ id, options }) => {
+export default ({ id, options, toggleChoice }) => {
   return (
     <div style={{ display: 'flex' }}>
       <FormControl component="fieldset" style={{ margin: '3rem' }}>
@@ -23,9 +23,7 @@ export default ({ id, options }) => {
                   disableRipple
                   disableTouchRipple
                   checked={value}
-                  onChange={e => {
-                    /* todo: add state logic */
-                  }}
+                  onChange={() => toggleChoice(id, key)}
                   value={key}
                 />
               }

@@ -12,7 +12,7 @@ import Checklist from './Checklist'
 
 import CustomProfiler from './CustomProfiler'
 
-export default ({ id, title, body, options }) => (
+export default ({ id, title, body, options, toggleChoice }) => (
   <CustomProfiler id={title}>
     <Card style={styles.card}>
       <CardContent style={styles.cardContent}>
@@ -30,7 +30,7 @@ export default ({ id, title, body, options }) => (
           value={id}
         />
 
-        <Checklist id={id} options={options} />
+        <Checklist id={id} options={options} toggleChoice={toggleChoice} />
       </CardContent>
       <CardActions>
         <Button
