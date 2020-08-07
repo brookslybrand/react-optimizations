@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 
-import { FormControlLabel, Switch, Button } from '@material-ui/core';
-import Card from './Card';
-// import CustomProfiler from './CustomProfiler';
+import { FormControlLabel, Switch, Button } from '@material-ui/core'
+import Card from './Card'
+import CustomProfiler from './CustomProfiler'
 
 import {
   AppContextProvider,
@@ -10,23 +10,23 @@ import {
   useAppDispatch,
   reverse,
   resetOptions,
-} from './app-context';
+} from './app-context'
 
 const App = () => {
   return (
-    // <CustomProfiler id="main" showBaseDuration>
-    <AppContextProvider>
-      <div style={styles.container}>
-        <Controls />
-        <Cards />
-      </div>
-    </AppContextProvider>
-    // </CustomProfiler>
-  );
-};
+    <CustomProfiler id="main" showBaseDuration>
+      <AppContextProvider>
+        <div style={styles.container}>
+          <Controls />
+          <Cards />
+        </div>
+      </AppContextProvider>
+    </CustomProfiler>
+  )
+}
 
 const Controls = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
   return (
     <div style={styles.controlsContainer}>
@@ -50,11 +50,11 @@ const Controls = () => {
         Reset Preferences
       </Button>
     </div>
-  );
-};
+  )
+}
 
 const Cards = () => {
-  const data = useAppContext();
+  const data = useAppContext()
 
   return (
     <div style={styles.cardContainer}>
@@ -62,8 +62,8 @@ const Cards = () => {
         <Card key={d.id} {...d} />
       ))}
     </div>
-  );
-};
+  )
+}
 
 const styles = {
   container: {
@@ -76,6 +76,6 @@ const styles = {
     display: 'flex',
     flexWrap: 'wrap',
   },
-};
+}
 
-export default App;
+export default App
