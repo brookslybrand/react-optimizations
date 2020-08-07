@@ -1,4 +1,5 @@
 import React, { useReducer, useCallback } from 'react'
+import produce from 'immer'
 import rfdc from 'rfdc'
 
 import { FormControlLabel, Switch, Button } from '@material-ui/core'
@@ -13,37 +14,35 @@ const TOGGLE_CHOICE = 'TOGGLE_CHOICE'
 const REVERSE_LIST = 'REVERSE_LIST'
 const RESET_DATA = 'RESET_DATA'
 
-const reducer = (state, action) => {
+const reducer = produce((draft, action) => {
   switch (action.type) {
     case TOGGLE_CHOICE: {
-      const { items } = state
+      const { items } = draft
       const { itemId, optionKey } = action
-      const itemIndex = items.findIndex(({ id }) => id === itemId)
-      if (itemIndex === -1) return state
-      const item = items[itemIndex]
+      const item = items.find(({ id }) => id === itemId)
+      if (item === undefined) return
       const option = item.options[optionKey]
-      const optionsCopy = {
-        ...item.options,
-        [optionKey]: { ...option, value: !option.value },
-      }
-      const itemCopy = { ...item, options: optionsCopy }
-      const itemsCopy = [...items]
-      itemsCopy.splice(itemIndex, 1, itemCopy)
-      return { ...state, items: itemsCopy }
+      option.value = !option.value
+      break
     }
     case REVERSE_LIST: {
-      const itemsCopy = [...state.items]
-      itemsCopy.reverse()
-      return { ...state, isReversed: !state.isReversed, items: itemsCopy }
+      draft.isReversed = !draft.isReversed
+      draft.items.reverse()
+      break
     }
     case RESET_DATA: {
-      return init(clone(fakeData))
+      draft.isReversed = init().isReversed
+      draft.items.forEach(item => {
+        const options = Object.values(item.options)
+        options.forEach(option => (option.value = false)) // we just know this was the default ;)
+      })
+      break
     }
     default: {
-      return state
+      return draft
     }
   }
-}
+})
 
 const init = initialItems => {
   return {
