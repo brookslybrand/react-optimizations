@@ -1,14 +1,11 @@
 import React, { useReducer, useCallback } from 'react'
 import produce from 'immer'
-import rfdc from 'rfdc'
 
 import { FormControlLabel, Switch, Button } from '@material-ui/core'
 import Card from './Card'
 import CustomProfiler from './CustomProfiler'
 
 import fakeData from './fake-data'
-
-const clone = rfdc()
 
 const TOGGLE_CHOICE = 'TOGGLE_CHOICE'
 const REVERSE_LIST = 'REVERSE_LIST'
