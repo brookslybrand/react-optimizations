@@ -30,7 +30,7 @@ export default Array.from({ length: N }).map((_, i) => ({
   options: i % 2 ? getProgrammingOptions() : getAnimalOptions(),
 }))
 
-export function addItem(itemsLength) {
+export function createNewItem(itemsLength) {
   return {
     id: uuid(),
     title: `Title ${itemsLength}`,

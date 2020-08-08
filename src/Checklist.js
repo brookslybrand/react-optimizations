@@ -7,8 +7,10 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@material-ui/core'
+import { useAppStateDispatch, toggleChoice } from './app-state'
 
-export default function Checklist({ id, options, toggleChoice }) {
+export default function Checklist({ id, options }) {
+  const dispatch = useAppStateDispatch()
   return (
     <div style={{ display: 'flex' }}>
       <FormControl component="fieldset" style={{ margin: '3rem' }}>
@@ -23,7 +25,7 @@ export default function Checklist({ id, options, toggleChoice }) {
                   disableRipple
                   disableTouchRipple
                   checked={value}
-                  onChange={() => toggleChoice(id, key)}
+                  onChange={() => dispatch(toggleChoice(id, key))}
                   value={key}
                 />
               }

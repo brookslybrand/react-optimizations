@@ -12,13 +12,7 @@ import Checklist from './Checklist'
 
 import CustomProfiler from './CustomProfiler'
 
-const Card = React.memo(function Card({
-  id,
-  title,
-  body,
-  options,
-  toggleChoice,
-}) {
+const Card = React.memo(function Card({ id, title, body, options }) {
   return (
     <CustomProfiler id={title}>
       <MuiCard style={styles.card}>
@@ -29,7 +23,7 @@ const Card = React.memo(function Card({
           </Typography>
           <MemoizedQRCode value={id} />
 
-          <Checklist id={id} options={options} toggleChoice={toggleChoice} />
+          <Checklist id={id} options={options} />
         </CardContent>
         <CardActions>
           <Button

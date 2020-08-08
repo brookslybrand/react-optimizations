@@ -1,31 +1,23 @@
 import React from 'react'
 import { FormControlLabel, Switch, Button } from '@material-ui/core'
-
-const Controls = React.memo(function Controls({
-  isReversed,
-  reverseList,
+import {
+  useAppState,
+  useAppStateDispatch,
   addItem,
   removeItem,
+  reverseList,
   resetData,
-}) {
+} from './app-state'
+
+export default function Controls() {
+  const dispatch = useAppStateDispatch()
   return (
     <div style={styles.controlsContainer}>
-      <FormControlLabel
-        control={
-          <Switch
-            value="reverse"
-            color="primary"
-            inputProps={{ 'aria-label': 'reverse switch' }}
-            checked={isReversed}
-            onChange={reverseList}
-          />
-        }
-        label="Reverse"
-      />
+      <ReverseControl />
       <Button
         variant="contained"
         color="default"
-        onClick={addItem}
+        onClick={() => dispatch(addItem())}
         style={styles.button}
       >
         Add Item
@@ -33,7 +25,7 @@ const Controls = React.memo(function Controls({
       <Button
         variant="contained"
         color="secondary"
-        onClick={removeItem}
+        onClick={() => dispatch(removeItem())}
         style={styles.button}
       >
         Remove Item
@@ -41,16 +33,33 @@ const Controls = React.memo(function Controls({
       <Button
         variant="contained"
         color="primary"
-        onClick={resetData}
+        onClick={() => dispatch(resetData())}
         style={styles.button}
       >
         Reset Preferences
       </Button>
     </div>
   )
-})
+}
 
-export default Controls
+function ReverseControl() {
+  const [{ isReversed }, dispatch] = [useAppState(), useAppStateDispatch()]
+
+  return (
+    <FormControlLabel
+      control={
+        <Switch
+          value="reverse"
+          color="primary"
+          inputProps={{ 'aria-label': 'reverse switch' }}
+          checked={isReversed}
+          onChange={() => dispatch(reverseList())}
+        />
+      }
+      label="Reverse"
+    />
+  )
+}
 
 const styles = {
   controlsContainer: {
