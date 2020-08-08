@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
-const N = 10
+const N = 2
 
 // https://baconipsum.com/
 const bacon = [
@@ -29,3 +29,12 @@ export default Array.from({ length: N }).map((_, i) => ({
   body: bacon[i % 5],
   options: i % 2 ? getProgrammingOptions() : getAnimalOptions(),
 }))
+
+export function addItem(itemsLength) {
+  return {
+    id: uuid(),
+    title: `Title ${itemsLength}`,
+    body: bacon[itemsLength % 5],
+    options: itemsLength % 2 ? getProgrammingOptions() : getAnimalOptions(),
+  }
+}

@@ -1,13 +1,15 @@
 import React, { useReducer, useCallback } from 'react'
 import produce from 'immer'
 
-import { FormControlLabel, Switch, Button } from '@material-ui/core'
-import Card from './Card'
 import CustomProfiler from './CustomProfiler'
+import Controls from './Controls'
+import Cards from './Cards'
 
-import fakeData from './fake-data'
+import fakeData, { addItem } from './fake-data'
 
 const TOGGLE_CHOICE = 'TOGGLE_CHOICE'
+const ADD_ITEM = 'ADD_ITEM'
+const REMOVE_ITEM = 'REMOVE_ITEM'
 const REVERSE_LIST = 'REVERSE_LIST'
 const RESET_DATA = 'RESET_DATA'
 
@@ -21,6 +23,16 @@ const reducer = produce((draft, action) => {
       const option = item.options[optionKey]
       option.value = !option.value
       break
+    }
+    case ADD_ITEM: {
+      const newItem = addItem(state.items.length)
+      const newItems = [...state.items, newItem]
+      return { ...state, items: newItems }
+    }
+    case REMOVE_ITEM: {
+      const newItems = [...state.items]
+      newItems.pop()
+      return { ...state, items: newItems }
     }
     case REVERSE_LIST: {
       draft.isReversed = !draft.isReversed
@@ -48,13 +60,15 @@ const init = initialItems => {
   }
 }
 
-const App = () => {
+export default function App() {
   const [state, dispatch] = useReducer(reducer, fakeData, init)
 
   const toggleChoice = useCallback(
     (itemId, optionKey) => dispatch({ type: TOGGLE_CHOICE, itemId, optionKey }),
     []
   )
+  const addItem = useCallback(() => dispatch({ type: ADD_ITEM }), [])
+  const removeItem = useCallback(() => dispatch({ type: REMOVE_ITEM }), [])
   const reverseList = useCallback(() => dispatch({ type: REVERSE_LIST }), [])
   const resetData = useCallback(() => dispatch({ type: RESET_DATA }), [])
 
@@ -64,6 +78,8 @@ const App = () => {
         <Controls
           isReversed={state.isReversed}
           reverseList={reverseList}
+          addItem={addItem}
+          removeItem={removeItem}
           resetData={resetData}
         />
         <Cards items={state.items} toggleChoice={toggleChoice} />
@@ -72,50 +88,8 @@ const App = () => {
   )
 }
 
-const Controls = React.memo(({ isReversed, reverseList, resetData }) => {
-  return (
-    <div style={styles.controlsContainer}>
-      <FormControlLabel
-        control={
-          <Switch
-            value="reverse"
-            color="primary"
-            inputProps={{ 'aria-label': 'reverse switch' }}
-            checked={isReversed}
-            onChange={reverseList}
-          />
-        }
-        label="Reverse"
-      />
-
-      <Button variant="contained" color="primary" onClick={resetData}>
-        Reset Preferences
-      </Button>
-    </div>
-  )
-})
-
-const Cards = ({ items, toggleChoice }) => {
-  return (
-    <div style={styles.cardContainer}>
-      {items.map(d => (
-        <Card key={d.id} {...d} toggleChoice={toggleChoice} />
-      ))}
-    </div>
-  )
-}
-
 const styles = {
   container: {
     margin: '1rem',
   },
-  controlsContainer: {
-    marginLeft: '1rem',
-  },
-  cardContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
 }
-
-export default App

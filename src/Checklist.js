@@ -8,7 +8,7 @@ import {
   Checkbox,
 } from '@material-ui/core'
 
-const Checklist = ({ id, options, toggleChoice }) => {
+export default function Checklist({ id, options, toggleChoice }) {
   return (
     <div style={{ display: 'flex' }}>
       <FormControl component="fieldset" style={{ margin: '3rem' }}>
@@ -35,5 +35,3 @@ const Checklist = ({ id, options, toggleChoice }) => {
     </div>
   )
 }
-
-export default Checklist
