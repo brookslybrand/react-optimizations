@@ -24,7 +24,7 @@ export default ({ id, options }) => {
                   disableTouchRipple
                   checked={value}
                   onChange={e => {
-                    /* todo: add state logic */
+                    /* TODO: add toggle item logic */
                   }}
                   value={key}
                 />

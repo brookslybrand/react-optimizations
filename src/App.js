@@ -24,7 +24,7 @@ const Controls = () => {
         control={
           <Switch
             onChange={() => {
-              /* Todo: add reversing logic */
+              /* TODO: add reversing logic */
             }}
             value="reverse"
             color="primary"
@@ -36,10 +36,21 @@ const Controls = () => {
 
       <Button
         variant="contained"
+        color="default"
+        onClick={() => {
+          /* TODO: add new item logic */
+        }}
+      >
+        Add Item
+      </Button>
+
+      <Button
+        variant="contained"
         color="primary"
         onClick={() => {
-          /* Todo: add reset state logic */
+          /* TODO: add reset state logic */
         }}
+        style={styles.resetButton}
       >
         Reset Preferences
       </Button>
@@ -67,6 +78,9 @@ const styles = {
   cardContainer: {
     display: 'flex',
     flexWrap: 'wrap',
+  },
+  resetButton: {
+    marginLeft: '1rem',
   },
 }
 
