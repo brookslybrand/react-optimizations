@@ -1,9 +1,9 @@
 import React, { useReducer, useCallback } from 'react'
 import rfdc from 'rfdc'
 
-import { FormControlLabel, Switch, Button } from '@material-ui/core'
-import Card from './Card'
 import CustomProfiler from './CustomProfiler'
+import Controls from './Controls'
+import Cards from './Cards'
 
 import fakeData from './fake-data'
 
@@ -52,7 +52,7 @@ const init = initialItems => {
   }
 }
 
-const App = () => {
+export default function App() {
   const [state, dispatch] = useReducer(reducer, fakeData, init)
 
   const toggleChoice = useCallback(
@@ -76,50 +76,8 @@ const App = () => {
   )
 }
 
-const Controls = React.memo(({ isReversed, reverseList, resetData }) => {
-  return (
-    <div style={styles.controlsContainer}>
-      <FormControlLabel
-        control={
-          <Switch
-            value="reverse"
-            color="primary"
-            inputProps={{ 'aria-label': 'reverse switch' }}
-            checked={isReversed}
-            onChange={reverseList}
-          />
-        }
-        label="Reverse"
-      />
-
-      <Button variant="contained" color="primary" onClick={resetData}>
-        Reset Preferences
-      </Button>
-    </div>
-  )
-})
-
-const Cards = ({ items, toggleChoice }) => {
-  return (
-    <div style={styles.cardContainer}>
-      {items.map(d => (
-        <Card key={d.id} {...d} toggleChoice={toggleChoice} />
-      ))}
-    </div>
-  )
-}
-
 const styles = {
   container: {
     margin: '1rem',
   },
-  controlsContainer: {
-    marginLeft: '1rem',
-  },
-  cardContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
 }
-
-export default App
