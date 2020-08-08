@@ -8,7 +8,7 @@ import {
   Checkbox,
 } from '@material-ui/core'
 
-export default ({ id, options }) => {
+export default function Checklist({ id, options }) {
   return (
     <div style={{ display: 'flex' }}>
       <FormControl component="fieldset" style={{ margin: '3rem' }}>
