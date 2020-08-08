@@ -1,7 +1,7 @@
 import React from 'react'
 import { FormControlLabel, Switch, Button } from '@material-ui/core'
 
-const Controls = React.memo(function Controls({
+export default function Controls({
   isReversed,
   reverseList,
   addItem,
@@ -48,9 +48,7 @@ const Controls = React.memo(function Controls({
       </Button>
     </div>
   )
-})
-
-export default Controls
+}
 
 const styles = {
   controlsContainer: {

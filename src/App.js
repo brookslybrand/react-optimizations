@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback } from 'react'
+import React, { useReducer } from 'react'
 import rfdc from 'rfdc'
 
 import CustomProfiler from './CustomProfiler'
@@ -67,14 +67,12 @@ const init = initialItems => {
 export default function App() {
   const [state, dispatch] = useReducer(reducer, fakeData, init)
 
-  const toggleChoice = useCallback(
-    (itemId, optionKey) => dispatch({ type: TOGGLE_CHOICE, itemId, optionKey }),
-    []
-  )
-  const addItem = useCallback(() => dispatch({ type: ADD_ITEM }), [])
-  const removeItem = useCallback(() => dispatch({ type: REMOVE_ITEM }), [])
-  const reverseList = useCallback(() => dispatch({ type: REVERSE_LIST }), [])
-  const resetData = useCallback(() => dispatch({ type: RESET_DATA }), [])
+  const toggleChoice = (itemId, optionKey) =>
+    dispatch({ type: TOGGLE_CHOICE, itemId, optionKey })
+  const addItem = () => dispatch({ type: ADD_ITEM })
+  const removeItem = () => dispatch({ type: REMOVE_ITEM })
+  const reverseList = () => dispatch({ type: REVERSE_LIST })
+  const resetData = () => dispatch({ type: RESET_DATA })
 
   return (
     <CustomProfiler id="main" showBaseDuration>
