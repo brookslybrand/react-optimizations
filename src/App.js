@@ -5,11 +5,13 @@ import CustomProfiler from './CustomProfiler'
 import Controls from './Controls'
 import Cards from './Cards'
 
-import fakeData from './fake-data'
+import fakeData, { addItem } from './fake-data'
 
 const clone = rfdc()
 
 const TOGGLE_CHOICE = 'TOGGLE_CHOICE'
+const ADD_ITEM = 'ADD_ITEM'
+const REMOVE_ITEM = 'REMOVE_ITEM'
 const REVERSE_LIST = 'REVERSE_LIST'
 const RESET_DATA = 'RESET_DATA'
 
@@ -30,6 +32,16 @@ const reducer = (state, action) => {
       const itemsCopy = [...items]
       itemsCopy.splice(itemIndex, 1, itemCopy)
       return { ...state, items: itemsCopy }
+    }
+    case ADD_ITEM: {
+      const newItem = addItem(state.items.length)
+      const newItems = [...state.items, newItem]
+      return { ...state, items: newItems }
+    }
+    case REMOVE_ITEM: {
+      const newItems = [...state.items]
+      newItems.pop()
+      return { ...state, items: newItems }
     }
     case REVERSE_LIST: {
       const itemsCopy = [...state.items]
@@ -59,6 +71,8 @@ export default function App() {
     (itemId, optionKey) => dispatch({ type: TOGGLE_CHOICE, itemId, optionKey }),
     []
   )
+  const addItem = useCallback(() => dispatch({ type: ADD_ITEM }), [])
+  const removeItem = useCallback(() => dispatch({ type: REMOVE_ITEM }), [])
   const reverseList = useCallback(() => dispatch({ type: REVERSE_LIST }), [])
   const resetData = useCallback(() => dispatch({ type: RESET_DATA }), [])
 
@@ -68,6 +82,8 @@ export default function App() {
         <Controls
           isReversed={state.isReversed}
           reverseList={reverseList}
+          addItem={addItem}
+          removeItem={removeItem}
           resetData={resetData}
         />
         <Cards items={state.items} toggleChoice={toggleChoice} />

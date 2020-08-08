@@ -4,6 +4,8 @@ import { FormControlLabel, Switch, Button } from '@material-ui/core'
 const Controls = React.memo(function Controls({
   isReversed,
   reverseList,
+  addItem,
+  removeItem,
   resetData,
 }) {
   return (
@@ -23,9 +25,7 @@ const Controls = React.memo(function Controls({
       <Button
         variant="contained"
         color="default"
-        onClick={() => {
-          /* TODO: add new item logic */
-        }}
+        onClick={addItem}
         style={styles.button}
       >
         Add Item
@@ -33,9 +33,7 @@ const Controls = React.memo(function Controls({
       <Button
         variant="contained"
         color="secondary"
-        onClick={() => {
-          /* TODO: add remove item logic */
-        }}
+        onClick={removeItem}
         style={styles.button}
       >
         Remove Item
