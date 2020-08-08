@@ -12,7 +12,7 @@ import Checklist from './Checklist'
 
 import CustomProfiler from './CustomProfiler'
 
-const CustomCard = React.memo(function Card({
+const Card = React.memo(function Card({
   id,
   title,
   body,
@@ -44,7 +44,7 @@ const CustomCard = React.memo(function Card({
   )
 })
 
-export default CustomCard
+export default Card
 
 const MemoizedQRCode = React.memo(({ value }) => {
   return (
