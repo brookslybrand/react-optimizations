@@ -25,14 +25,13 @@ const reducer = produce((draft, action) => {
       break
     }
     case ADD_ITEM: {
-      const newItem = addItem(state.items.length)
-      const newItems = [...state.items, newItem]
-      return { ...state, items: newItems }
+      const { items } = draft
+      items.push(addItem(items.length))
+      break
     }
     case REMOVE_ITEM: {
-      const newItems = [...state.items]
-      newItems.pop()
-      return { ...state, items: newItems }
+      draft.items.pop()
+      break
     }
     case REVERSE_LIST: {
       draft.isReversed = !draft.isReversed
