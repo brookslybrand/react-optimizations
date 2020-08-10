@@ -7,13 +7,7 @@ import React, {
 } from 'react'
 import produce from 'immer'
 
-import {
-  atom,
-  useRecoilValue,
-  atomFamily,
-  useSetRecoilState,
-  useRecoilState,
-} from 'recoil'
+import { atom, useRecoilValue, atomFamily, useSetRecoilState } from 'recoil'
 
 import fakeData, { createNewItem } from './fake-data'
 
@@ -31,13 +25,16 @@ export function useSetItemIds() {
 }
 
 export function useAddItemId() {
-  const [currentItemIds, setItemIds] = useRecoilState(itemIds)
-
+  const setItemIds = useSetItemIds()
   return newId => {
     // only add a new id if the id doesn't already exist
-    if (!currentItemIds.includes(newId)) {
-      setItemIds([...currentItemIds, newId])
-    }
+    setItemIds(
+      produce(draft => {
+        if (!draft.includes(newId)) {
+          draft.push(newId)
+        }
+      })
+    )
   }
 }
 
@@ -49,6 +46,26 @@ export function useItem(itemId) {
 
 export function useSetItem(itemId) {
   return useSetRecoilState(items(itemId))
+}
+
+const isReversed = atom({
+  key: 'isReversed',
+  default: false,
+})
+
+export function useIsReversed() {
+  return useRecoilValue(isReversed)
+}
+
+export function useReverseItemIds() {
+  const setItemIds = useSetItemIds()
+  const setIsReversed = useSetRecoilState(isReversed)
+
+  return () => {
+    // only add a new id if the id doesn't already exist
+    setItemIds(produce(draft => void draft.reverse()))
+    setIsReversed(prev => !prev)
+  }
 }
 
 export function useAddItem() {
@@ -70,6 +87,11 @@ export function useAddItem() {
     setNewItem(newestItem)
     addItemId(newestItem.id)
   }
+}
+
+export function useRemoveItem() {
+  const setItemIds = useSetItemIds()
+  return () => setItemIds(produce(draft => void draft.pop()))
 }
 
 export function useAddInitialItems() {
@@ -96,16 +118,6 @@ export default function AppStateProvider({ children }) {
       </AppDispatchContext.Provider>
     </AppStateContext.Provider>
   )
-}
-
-export function useAppState() {
-  const state = useContext(AppStateContext)
-  if (state === undefined) {
-    throw new Error(
-      `useAppState must be called in a child of AppDispatchContext`
-    )
-  }
-  return state
 }
 
 export function useAppStateDispatch() {

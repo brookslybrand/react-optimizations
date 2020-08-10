@@ -1,18 +1,19 @@
 import React from 'react'
 import { FormControlLabel, Switch, Button } from '@material-ui/core'
 import {
-  useAppState,
   useAppStateDispatch,
-  removeItem,
-  reverseList,
   resetData,
   useAddItem,
+  useRemoveItem,
+  useReverseItemIds,
+  useIsReversed,
 } from './app-state'
 
 export default function Controls() {
   const dispatch = useAppStateDispatch()
 
   const addItem = useAddItem()
+  const removeItem = useRemoveItem()
 
   return (
     <div style={styles.controlsContainer}>
@@ -28,7 +29,7 @@ export default function Controls() {
       <Button
         variant="contained"
         color="secondary"
-        onClick={() => dispatch(removeItem())}
+        onClick={removeItem}
         style={styles.button}
       >
         Remove Item
@@ -46,7 +47,8 @@ export default function Controls() {
 }
 
 function ReverseControl() {
-  const [{ isReversed }, dispatch] = [useAppState(), useAppStateDispatch()]
+  const reverseList = useReverseItemIds()
+  const isReversed = useIsReversed()
 
   return (
     <FormControlLabel
@@ -56,7 +58,7 @@ function ReverseControl() {
           color="primary"
           inputProps={{ 'aria-label': 'reverse switch' }}
           checked={isReversed}
-          onChange={() => dispatch(reverseList())}
+          onChange={reverseList}
         />
       }
       label="Reverse"
