@@ -10,7 +10,7 @@ import {
 import { QRCode } from 'react-qr-svg'
 import Checklist from './Checklist'
 
-// import CustomProfiler from './CustomProfiler'
+import CustomProfiler from './CustomProfiler'
 import { useItem } from './app-state'
 
 const Card = React.memo(function Card({ id }) {
@@ -21,27 +21,27 @@ const Card = React.memo(function Card({ id }) {
   const { title, body, options } = item
 
   return (
-    // <CustomProfiler id={title}>
-    <MuiCard style={styles.card}>
-      <CardContent style={styles.cardContent}>
-        <Typography variant="h5">{title}</Typography>
-        <Typography variant="body2" component="p" style={styles.cardElement}>
-          {body}
-        </Typography>
-        <MemoizedQRCode value={id} />
+    <CustomProfiler id={title}>
+      <MuiCard style={styles.card}>
+        <CardContent style={styles.cardContent}>
+          <Typography variant="h5">{title}</Typography>
+          <Typography variant="body2" component="p" style={styles.cardElement}>
+            {body}
+          </Typography>
+          <MemoizedQRCode value={id} />
 
-        <Checklist id={id} options={options} />
-      </CardContent>
-      <CardActions>
-        <Button
-          size="small"
-          href="https://baconipsum.com/?paras=5&type=all-meat&start-with-lorem=1"
-        >
-          Learn More
-        </Button>
-      </CardActions>
-    </MuiCard>
-    // </CustomProfiler>
+          <Checklist id={id} options={options} />
+        </CardContent>
+        <CardActions>
+          <Button
+            size="small"
+            href="https://baconipsum.com/?paras=5&type=all-meat&start-with-lorem=1"
+          >
+            Learn More
+          </Button>
+        </CardActions>
+      </MuiCard>
+    </CustomProfiler>
   )
 })
 
