@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react'
 import produce from 'immer'
-
 import {
   atom,
   useRecoilValue,
@@ -8,6 +7,8 @@ import {
   useSetRecoilState,
   selectorFamily,
   RecoilRoot,
+  selector,
+  waitForAll,
 } from 'recoil'
 
 import fakeData, { createNewItem } from './fake-data'
@@ -62,6 +63,24 @@ export function useIsReversed() {
 export function useItem(itemId) {
   return useRecoilValue(itemsAtomFamily(itemId))
 }
+
+export function useAppState() {
+  return useRecoilValue(appStateSelector)
+}
+
+const appStateSelector = selector({
+  key: 'appStateSelector',
+  get: ({ get }) => {
+    const itemIds = get(itemIdsAtom)
+    const isReversed = get(isReversedAtom)
+    const items = get(waitForAll(itemIds.map(id => itemsAtomFamily(id))))
+    return {
+      itemIds,
+      isReversed,
+      items,
+    }
+  },
+})
 
 // reducer
 const TOGGLE_CHOICE = 'TOGGLE_CHOICE'

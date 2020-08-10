@@ -1,6 +1,6 @@
 import React from 'react'
 
-import AppStateProvider from './app-state'
+import AppStateProvider, { useAppState } from './app-state'
 import CustomProfiler from './CustomProfiler'
 import Controls from './Controls'
 import Cards from './Cards'
@@ -11,6 +11,7 @@ export default function App() {
       <AppStateProvider>
         <div style={styles.container}>
           <Controls />
+          <AppState />
           <Cards />
         </div>
       </AppStateProvider>
@@ -18,8 +19,21 @@ export default function App() {
   )
 }
 
+function AppState() {
+  const appState = useAppState()
+
+  return (
+    <details style={styles.details}>
+      <pre>{JSON.stringify(appState, null, 2)}</pre>
+    </details>
+  )
+}
+
 const styles = {
   container: {
     margin: '1rem',
+  },
+  details: {
+    whiteSpace: 'nowrap',
   },
 }
