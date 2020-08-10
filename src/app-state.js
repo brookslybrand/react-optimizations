@@ -1,21 +1,27 @@
 import { useState, useEffect } from 'react'
 import produce from 'immer'
 
-import { atom, useRecoilValue, atomFamily, useSetRecoilState } from 'recoil'
+import {
+  atom,
+  useRecoilValue,
+  atomFamily,
+  useSetRecoilState,
+  selector,
+} from 'recoil'
 
 import fakeData, { createNewItem } from './fake-data'
 
-const itemIds = atom({
+const itemIdsAtom = atom({
   key: 'itemIds',
   default: [],
 })
 
 export function useItemIds() {
-  return useRecoilValue(itemIds)
+  return useRecoilValue(itemIdsAtom)
 }
 
 export function useSetItemIds() {
-  return useSetRecoilState(itemIds)
+  return useSetRecoilState(itemIdsAtom)
 }
 
 export function useAddItemId() {
@@ -32,18 +38,18 @@ export function useAddItemId() {
   }
 }
 
-const items = atomFamily({})
+const itemsAtomFamily = atomFamily({})
 
 export function useItem(itemId) {
-  return useRecoilValue(items(itemId))
+  return useRecoilValue(itemsAtomFamily(itemId))
 }
 
 export function useSetItem(itemId) {
-  return useSetRecoilState(items(itemId))
+  return useSetRecoilState(itemsAtomFamily(itemId))
 }
 
 export function useToggleChoice(itemId) {
-  const setItem = useSetRecoilState(items(itemId))
+  const setItem = useSetRecoilState(itemsAtomFamily(itemId))
   return optionKey => {
     setItem(
       produce(draft => {
@@ -54,17 +60,17 @@ export function useToggleChoice(itemId) {
   }
 }
 
-const isReversed = atom({
+const isReversedAtom = atom({
   key: 'isReversed',
   default: false,
 })
 
 export function useIsReversed() {
-  return useRecoilValue(isReversed)
+  return useRecoilValue(isReversedAtom)
 }
 
 export function useSetIsReversed() {
-  return useSetRecoilState(isReversed)
+  return useSetRecoilState(isReversedAtom)
 }
 
 export function useReverseItemIds() {
@@ -104,17 +110,36 @@ export function useRemoveItem() {
   return () => setItemIds(produce(draft => void draft.pop()))
 }
 
-export function useResetData() {
-  const setIsReversed = useSetIsReversed()
+const resetItemsSelector = selector({
+  key: 'resetItemsSelector',
+  set: ({ get, set }) => {
+    const itemIds = get(itemIdsAtom)
 
-  return () => {
-    setIsReversed(false)
-  }
-  // draft.isReversed = init().isReversed
-  // draft.items.forEach(item => {
-  //   const options = Object.values(item.options)
-  //   options.forEach(option => (option.value = false)) // we just know this was the default ;)
-  // })
+    // reset is reversed
+    const isReversed = get(isReversedAtom)
+    if (isReversed) {
+      set(isReversedAtom, false)
+      set(
+        itemIdsAtom,
+        produce(itemIds, draft => void draft.reverse())
+      )
+    }
+
+    // reset all of the items
+    itemIds.forEach(id => {
+      const itemAtom = itemsAtomFamily(id)
+      const item = get(itemAtom)
+      const resetItem = produce(item, draft => {
+        const options = Object.values(draft.options)
+        options.forEach(option => (option.value = false)) // we just know this was the default ;)
+      })
+      set(itemAtom, resetItem)
+    })
+  },
+})
+
+export function useResetData() {
+  return useSetRecoilState(resetItemsSelector)
 }
 
 export function useAddInitialItems() {
