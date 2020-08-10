@@ -5,7 +5,7 @@ import React, {
   useState,
   useEffect,
 } from 'react'
-import produce from 'immer'
+import produce, { current } from 'immer'
 
 import { atom, useRecoilValue, atomFamily, useSetRecoilState } from 'recoil'
 
@@ -48,6 +48,18 @@ export function useSetItem(itemId) {
   return useSetRecoilState(items(itemId))
 }
 
+export function useToggleChoice(itemId) {
+  const setItem = useSetRecoilState(items(itemId))
+  return optionKey => {
+    setItem(
+      produce(draft => {
+        const option = draft.options[optionKey]
+        option.value = !option.value
+      })
+    )
+  }
+}
+
 const isReversed = atom({
   key: 'isReversed',
   default: false,
@@ -69,16 +81,16 @@ export function useReverseItemIds() {
 }
 
 export function useAddItem() {
-  const [newItem, setNewItem] = useState({})
+  const [newItem, setNewItem] = useState(null)
   const itemIds = useItemIds()
   const addItemId = useAddItemId()
-  const setItem = useSetItem(newItem.id ?? undefined)
+  const setItem = useSetItem(newItem?.id)
 
   // if the id update, go ahead and set its values
   useEffect(() => {
-    if (newItem.id !== undefined) {
+    if (newItem !== null) {
       setItem(newItem)
-      setNewItem({}) // clear the item once it's been added
+      setNewItem(null) // clear the item once it's been added
     }
   }, [newItem, setItem])
 
