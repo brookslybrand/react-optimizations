@@ -16,6 +16,13 @@ const itemIdsAtom = atom({
   default: [],
 })
 
+const isReversedAtom = atom({
+  key: 'isReversed',
+  default: false,
+})
+
+const itemsAtomFamily = atomFamily({})
+
 export function useItemIds() {
   return useRecoilValue(itemIdsAtom)
 }
@@ -24,6 +31,7 @@ export function useSetItemIds() {
   return useSetRecoilState(itemIdsAtom)
 }
 
+const TOGGLE_CHOICE = 'TOGGLE_CHOICE'
 const ADD_ITEM = 'ADD_ITEM'
 const REMOVE_ITEM = 'REMOVE_ITEM'
 const REVERSE_LIST = 'REVERSE_LIST'
@@ -31,14 +39,28 @@ const RESET_DATA = 'RESET_DATA'
 
 const dispatchSelectorFamily = selectorFamily({
   key: 'dispatchSelectorFamily',
-  set: ({ type }) => ({ get, set }) => {
+  set: type => ({ get, set }, payload) => {
     const updateItemIds = recipe => {
       const newItemIds = produce(get(itemIdsAtom), recipe)
       set(itemIdsAtom, newItemIds)
     }
 
+    const updateItem = (itemId, recipe) => {
+      const itemAtom = itemsAtomFamily(itemId)
+      const updatedItem = produce(get(itemAtom), recipe)
+      set(itemAtom, updatedItem)
+    }
+
     // eslint-disable-next-line default-case
     switch (type) {
+      case TOGGLE_CHOICE: {
+        const { itemId, optionKey } = payload
+        updateItem(itemId, draft => {
+          const option = draft.options[optionKey]
+          option.value = !option.value
+        })
+        break
+      }
       case ADD_ITEM: {
         const itemIds = get(itemIdsAtom)
         const newItem = createNewItem(itemIds.length)
@@ -66,13 +88,10 @@ const dispatchSelectorFamily = selectorFamily({
         const itemIds = get(itemIdsAtom)
         // reset all of the items
         itemIds.forEach(id => {
-          const itemAtom = itemsAtomFamily(id)
-          const item = get(itemAtom)
-          const resetItem = produce(item, draft => {
+          updateItem(id, draft => {
             const options = Object.values(draft.options)
             options.forEach(option => (option.value = false)) // we just know this was the default ;)
           })
-          set(itemAtom, resetItem)
         })
         break
       }
@@ -81,30 +100,26 @@ const dispatchSelectorFamily = selectorFamily({
 })
 
 export function useAddItem() {
-  return useSetRecoilState(dispatchSelectorFamily({ type: ADD_ITEM }))
+  return useSetRecoilState(dispatchSelectorFamily(ADD_ITEM))
 }
 
 export function useRemoveItem() {
-  return useSetRecoilState(dispatchSelectorFamily({ type: REMOVE_ITEM }))
+  return useSetRecoilState(dispatchSelectorFamily(REMOVE_ITEM))
 }
 
-const isReversedAtom = atom({
-  key: 'isReversed',
-  default: false,
-})
+export function useReverseItemIds() {
+  return useSetRecoilState(dispatchSelectorFamily(REVERSE_LIST))
+}
+
+export function useResetData() {
+  return useSetRecoilState(dispatchSelectorFamily(RESET_DATA))
+}
 
 export function useIsReversed() {
   return useRecoilValue(isReversedAtom)
 }
 
-export function useReverseItemIds() {
-  return useSetRecoilState(dispatchSelectorFamily({ type: REVERSE_LIST }))
-}
-
-export function useResetData() {
-  return useSetRecoilState(dispatchSelectorFamily({ type: RESET_DATA }))
-}
-
+// TODO: add this to switch
 export function useAddInitialItems() {
   const addItem = useAddItem()
   const [itemsCount, setItemsCount] = useState(0)
@@ -117,24 +132,11 @@ export function useAddInitialItems() {
   }, [addItem, itemsCount])
 }
 
-const itemsAtomFamily = atomFamily({})
-
 export function useItem(itemId) {
   return useRecoilValue(itemsAtomFamily(itemId))
 }
 
-export function useSetItem(itemId) {
-  return useSetRecoilState(itemsAtomFamily(itemId))
-}
-
 export function useToggleChoice(itemId) {
-  const setItem = useSetRecoilState(itemsAtomFamily(itemId))
-  return optionKey => {
-    setItem(
-      produce(draft => {
-        const option = draft.options[optionKey]
-        option.value = !option.value
-      })
-    )
-  }
+  const toggleChoice = useSetRecoilState(dispatchSelectorFamily(TOGGLE_CHOICE))
+  return optionKey => toggleChoice({ itemId, optionKey })
 }
