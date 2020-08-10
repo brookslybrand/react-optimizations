@@ -1,10 +1,9 @@
 import React from 'react'
 import Card from './Card'
-import { useItemIds, useAddInitialItems } from './app-state'
+import { useItemIds } from './app-state'
 
 export default function Cards() {
   const itemIds = useItemIds()
-  useAddInitialItems()
 
   return (
     <div style={styles.cardContainer}>

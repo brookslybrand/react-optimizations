@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import produce from 'immer'
 
 import {
@@ -7,9 +7,36 @@ import {
   atomFamily,
   useSetRecoilState,
   selectorFamily,
+  RecoilRoot,
 } from 'recoil'
 
 import fakeData, { createNewItem } from './fake-data'
+
+export default function AppStateProvider({ children }) {
+  return (
+    <RecoilRoot>
+      <AddInitialData>{children}</AddInitialData>
+    </RecoilRoot>
+  )
+}
+
+function AddInitialData({ children }) {
+  const setInitialData = useSetRecoilState(
+    dispatchSelectorFamily(SET_INITIAL_DATA)
+  )
+  const mounted = useRef(false)
+
+  useEffect(() => {
+    if (!mounted.current) {
+      setInitialData()
+      mounted.current = true
+    }
+  })
+
+  return children
+}
+
+// recoil atoms
 
 const itemIdsAtom = atom({
   key: 'itemIds',
@@ -23,19 +50,26 @@ const isReversedAtom = atom({
 
 const itemsAtomFamily = atomFamily({})
 
+// getters
 export function useItemIds() {
   return useRecoilValue(itemIdsAtom)
 }
 
-export function useSetItemIds() {
-  return useSetRecoilState(itemIdsAtom)
+export function useIsReversed() {
+  return useRecoilValue(isReversedAtom)
 }
 
+export function useItem(itemId) {
+  return useRecoilValue(itemsAtomFamily(itemId))
+}
+
+// reducer
 const TOGGLE_CHOICE = 'TOGGLE_CHOICE'
 const ADD_ITEM = 'ADD_ITEM'
 const REMOVE_ITEM = 'REMOVE_ITEM'
 const REVERSE_LIST = 'REVERSE_LIST'
 const RESET_DATA = 'RESET_DATA'
+const SET_INITIAL_DATA = 'SET_INITIAL_DATA'
 
 const dispatchSelectorFamily = selectorFamily({
   key: 'dispatchSelectorFamily',
@@ -95,10 +129,15 @@ const dispatchSelectorFamily = selectorFamily({
         })
         break
       }
+      case SET_INITIAL_DATA: {
+        fakeData.forEach(item => updateItem(item.id, () => item))
+        updateItemIds(() => fakeData.map(({ id }) => id))
+      }
     }
   },
 })
 
+// bound action creators
 export function useAddItem() {
   return useSetRecoilState(dispatchSelectorFamily(ADD_ITEM))
 }
@@ -113,27 +152,6 @@ export function useReverseItemIds() {
 
 export function useResetData() {
   return useSetRecoilState(dispatchSelectorFamily(RESET_DATA))
-}
-
-export function useIsReversed() {
-  return useRecoilValue(isReversedAtom)
-}
-
-// TODO: add this to switch
-export function useAddInitialItems() {
-  const addItem = useAddItem()
-  const [itemsCount, setItemsCount] = useState(0)
-
-  useEffect(() => {
-    if (itemsCount < fakeData.length) {
-      addItem(fakeData[itemsCount])
-      setItemsCount(prev => prev + 1)
-    }
-  }, [addItem, itemsCount])
-}
-
-export function useItem(itemId) {
-  return useRecoilValue(itemsAtomFamily(itemId))
 }
 
 export function useToggleChoice(itemId) {
