@@ -3,21 +3,24 @@ import { FormControlLabel, Switch, Button } from '@material-ui/core'
 import {
   useAppState,
   useAppStateDispatch,
-  addItem,
   removeItem,
   reverseList,
   resetData,
+  useAddItem,
 } from './app-state'
 
 export default function Controls() {
   const dispatch = useAppStateDispatch()
+
+  const addItem = useAddItem()
+
   return (
     <div style={styles.controlsContainer}>
       <ReverseControl />
       <Button
         variant="contained"
         color="default"
-        onClick={() => dispatch(addItem())}
+        onClick={addItem}
         style={styles.button}
       >
         Add Item

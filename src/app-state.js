@@ -1,7 +1,88 @@
-import React, { useReducer, createContext, useContext } from 'react'
+import React, {
+  useReducer,
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+} from 'react'
 import produce from 'immer'
 
+import {
+  atom,
+  useRecoilValue,
+  atomFamily,
+  useSetRecoilState,
+  useRecoilState,
+} from 'recoil'
+
 import fakeData, { createNewItem } from './fake-data'
+
+const itemIds = atom({
+  key: 'itemIds',
+  default: [],
+})
+
+export function useItemIds() {
+  return useRecoilValue(itemIds)
+}
+
+export function useSetItemIds() {
+  return useSetRecoilState(itemIds)
+}
+
+export function useAddItemId() {
+  const [currentItemIds, setItemIds] = useRecoilState(itemIds)
+
+  return newId => {
+    // only add a new id if the id doesn't already exist
+    if (!currentItemIds.includes(newId)) {
+      setItemIds([...currentItemIds, newId])
+    }
+  }
+}
+
+const items = atomFamily({})
+
+export function useItem(itemId) {
+  return useRecoilValue(items(itemId))
+}
+
+export function useSetItem(itemId) {
+  return useSetRecoilState(items(itemId))
+}
+
+export function useAddItem() {
+  const [newItem, setNewItem] = useState({})
+  const itemIds = useItemIds()
+  const addItemId = useAddItemId()
+  const setItem = useSetItem(newItem.id ?? undefined)
+
+  // if the id update, go ahead and set its values
+  useEffect(() => {
+    if (newItem.id !== undefined) {
+      setItem(newItem)
+      setNewItem({}) // clear the item once it's been added
+    }
+  }, [newItem, setItem])
+
+  return () => {
+    const newestItem = createNewItem(itemIds.length)
+    setNewItem(newestItem)
+    addItemId(newestItem.id)
+  }
+}
+
+export function useAddInitialItems() {
+  const addItem = useAddItem()
+  const [itemsCount, setItemsCount] = useState(0)
+
+  useEffect(() => {
+    if (itemsCount < fakeData.length) {
+      addItem(fakeData[itemsCount])
+      setItemsCount(prev => prev + 1)
+    }
+  }, [addItem, itemsCount])
+}
 
 const AppStateContext = createContext()
 const AppDispatchContext = createContext()
