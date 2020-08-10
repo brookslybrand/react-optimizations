@@ -1,19 +1,17 @@
 import React from 'react'
 import { FormControlLabel, Switch, Button } from '@material-ui/core'
 import {
-  useAppStateDispatch,
-  resetData,
   useAddItem,
   useRemoveItem,
   useReverseItemIds,
   useIsReversed,
+  useResetData,
 } from './app-state'
 
 export default function Controls() {
-  const dispatch = useAppStateDispatch()
-
   const addItem = useAddItem()
   const removeItem = useRemoveItem()
+  const resetData = useResetData()
 
   return (
     <div style={styles.controlsContainer}>
@@ -37,7 +35,7 @@ export default function Controls() {
       <Button
         variant="contained"
         color="primary"
-        onClick={() => dispatch(resetData())}
+        onClick={resetData}
         style={styles.button}
       >
         Reset Preferences
