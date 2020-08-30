@@ -133,9 +133,8 @@ const dispatchSelectorFamily = selectorFamily({
       case RESET_DATA: {
         // reset is reversed
         const isReversed = get(isReversedAtom)
-        console.log({ isReversed })
         if (isReversed) {
-          set(dispatchSelectorFamily({ type: REVERSE_LIST }))
+          set(dispatchSelectorFamily(REVERSE_LIST))
         }
 
         const itemIds = get(itemIdsAtom)
