@@ -1,5 +1,7 @@
 # Summary
 
+[Check out the demo](https://react-optimizations.netlify.app/)
+
 This repository hosts the code for a
 [video series on optimizing react applications.](https://www.youtube.com/playlist?list=PL4XlGi3lmbLFe8kizCgMrXUr3420_wmu7)
 
